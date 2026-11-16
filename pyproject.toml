@@ -1,0 +1,17 @@
+[project]
+name = "comfyui-h3-sampler"
+description = "KSampler for MiniMax H3 Image, tuned for photographic realism: Euler on the distilled grid for structure, a second-order step with fresh noise for skin and hair texture."
+version = "1.0.0"
+license = { file = "LICENSE" }
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/igorls/comfyui-h3-sampler"
+Documentation = "https://github.com/igorls/comfyui-h3-sampler#readme"
+"Bug Tracker" = "https://github.com/igorls/comfyui-h3-sampler/issues"
+
+[tool.comfy]
+# Fill in the publisher id from registry.comfy.org before `comfy node publish`.
+PublisherId = ""
+DisplayName = "H3 Image Sampler"
+Icon = ""
