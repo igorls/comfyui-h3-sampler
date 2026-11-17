@@ -120,13 +120,74 @@ class H3ImageSigmas:
         return (h3_sigmas(model, schedule),)
 
 
+class H3ImageEmptyPicture:
+    """Text to image: puts an empty picture's vision tokens in front of the prompt on the first steps.
+
+    With no picture in its conditioning, H3 Image renders in a text-only mode that comes out crusty and
+    over-sharpened at 100%; any picture switches it to its much cleaner reference mode. This adds only the vision
+    tokens of a black 512 px picture, and only on the structure steps, which is enough to switch modes and cheaper
+    than wiring a real picture through the conditioning node (no reference latent, no extra tokens on the texture
+    steps).
+
+    A port of the "text with empty image" mode of Kijai's MiniMax H3 Prompt Weight node (ComfyUI-KJNodes, GPL-3.0).
+    """
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {"required": {
+            "clip": ("CLIP", {"tooltip": "The MiniMax H3 text encoder, the same one the conditioning node uses."}),
+            "positive": ("CONDITIONING", {"tooltip": "From MiniMax H3 Image Conditioning with no pictures connected."}),
+            "start": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.001, "advanced": True,
+                                "tooltip": "Start of the sampling range that sees the empty picture."}),
+            "end": ("FLOAT", {"default": 0.25, "min": 0.0, "max": 1.0, "step": 0.001, "advanced": True,
+                              "tooltip": "End of that range. 0.25 covers the first two of the 6 steps, which is enough."}),
+        }}
+
+    RETURN_TYPES = ("CONDITIONING",)
+    RETURN_NAMES = ("positive",)
+    FUNCTION = "apply"
+    CATEGORY = "conditioning"
+    DESCRIPTION = ("Text to image with MiniMax H3 Image: adds an empty picture's vision tokens on the first steps, which "
+                   "switches H3 to its cleaner reference mode (no crusty, over-sharpened skin). The prompt never "
+                   "mentions the picture. Leaves conditioning that already has a picture as it is. Port of Kijai's "
+                   "'text with empty image' mode (KJNodes).")
+
+    def apply(self, clip, positive, start=0.0, end=0.25):
+        if end <= start:
+            return (positive,)
+        # the H3 encoder is causal and not chat-templated, so "Picture 1: <vision block>" encodes the same in front
+        # of any prompt and can be put in front of the already encoded prompt
+        picture, extra = clip.encode_from_tokens_scheduled(
+            clip.tokenize("", images=[torch.zeros(1, 512, 512, 3)], picture_label="Picture %d: "))[0]
+        picture_tags = extra.get("minimax_token_tags")
+        out = []
+        for cond, d in positive:
+            tags = d.get("minimax_token_tags")
+            if picture_tags is None or tags is None:
+                raise ValueError("H3 Image Empty Picture needs the MiniMax H3 text encoder and MiniMax H3 Image "
+                                 "Conditioning.")
+            if (tags == 0).any():  # vision tokens already there: it is an edit, or already switched
+                out.append([cond, d])
+                continue
+            with_picture = torch.cat([picture.to(device=cond.device, dtype=cond.dtype), cond], dim=1)
+            all_tags = torch.cat([picture_tags.to(tags.device), tags])
+            out.append([with_picture, {**d, "minimax_token_tags": all_tags, "start_percent": start, "end_percent": end}])
+            if start > 0.0:
+                out.append([cond, {**d, "start_percent": 0.0, "end_percent": start}])
+            if end < 1.0:
+                out.append([cond, {**d, "start_percent": end, "end_percent": 1.0}])
+        return (out,)
+
+
 NODE_CLASS_MAPPINGS = {
     "H3ImageKSampler": H3ImageKSampler,
     "H3ImageSampler": H3ImageSampler,
     "H3ImageSigmas": H3ImageSigmas,
+    "H3ImageEmptyPicture": H3ImageEmptyPicture,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
     "H3ImageKSampler": "H3 Image KSampler",
     "H3ImageSampler": "H3 Image Sampler",
     "H3ImageSigmas": "H3 Image Sigmas",
+    "H3ImageEmptyPicture": "H3 Image Empty Picture (text to image)",
 }

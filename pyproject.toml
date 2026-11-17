@@ -1,7 +1,7 @@
 [project]
 name = "comfyui-h3-sampler"
-description = "KSampler for MiniMax H3 Image, tuned for photographic realism: Euler on the distilled grid for structure, a second-order step with fresh noise for skin and hair texture."
-version = "1.0.0"
+description = "KSampler for MiniMax H3 Image, tuned for photographic realism: Euler on the distilled grid for structure, a second-order step with fresh noise for skin and hair texture. Plus H3 Image Empty Picture, which keeps text to image in H3's clean reference mode."
+version = "1.1.0"
 license = { file = "LICENSE" }
 dependencies = []
 
