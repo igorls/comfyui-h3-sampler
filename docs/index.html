@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>H3 Realism Sampler — Photographic Realism for MiniMax H3 Image in ComfyUI</title>
+  <meta name="description" content="ComfyUI V3 node pack for MiniMax H3 Image: keep natural skin pores, hair strands, and facial identity in 6 steps with Frequency-Split Spectral Re-Noising, native Empty Picture T2I switching, and up to 96 MP+ resolution presets.">
+  <meta property="og:title" content="H3 Realism Sampler v2.0 for ComfyUI">
+  <meta property="og:description" content="Keep natural pores, hair strands, and facial identity in 6 steps—without crusty T2I halos or plastic smoothing.">
+  <meta property="og:image" content="assets/p2_full_spec6.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <div class="brand-group">
+        <a href="#top" class="brand">
+          <span class="brand-name">H3 Realism Sampler</span>
+        </a>
+        <a href="#upgrade" class="brand-ver" aria-label="Version 2.0 upgrade and breaking change notice">v2.0</a>
+      </div>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="#loupe" aria-current="location">Loupe</a>
+        <a href="#spectral">Method</a>
+        <a href="#proof">Proof</a>
+        <a href="#nodes">Nodes</a>
+        <a href="#install">Install</a>
+      </nav>
+      <div class="header-actions">
+        <a class="btn btn-ghost btn-sm" href="https://civitai.red/models/3054818/minimax-h3-image-realism-edit-text-to-image-workflows-16-mp-comfyui" target="_blank" rel="noopener">CivitAI</a>
+        <a class="btn btn-primary btn-sm" href="https://github.com/igorls/comfyui-h3-sampler" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- Hero + Pixel-Aligned 1:1 Optical Loupe -->
+    <section class="hero" id="loupe">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <h1>Photographic detail for <span class="accent-word">MiniMax H3 Image</span>.</h1>
+          <p class="hero-lead">
+            Keep natural skin pores, individual hair strands, and facial identity in 6 steps—without crusty text-to-image halos or plastic smoothing. Built for ComfyUI V3 with automatic Empty Picture T2I switching and up to 96 MP+ resolution presets.
+          </p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#install">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Install in ComfyUI
+            </a>
+            <a class="btn btn-ghost" href="https://civitai.red/models/3054818/minimax-h3-image-realism-edit-text-to-image-workflows-16-mp-comfyui" target="_blank" rel="noopener">
+              Download v2.0 Workflows
+            </a>
+          </div>
+          <div class="cmd-strip" aria-label="Quick install command">
+            <code id="cloneCmd">cd ComfyUI/custom_nodes &amp;&amp; git clone https://github.com/igorls/comfyui-h3-sampler</code>
+            <button type="button" class="cmd-copy" data-copy-target="cloneCmd" aria-label="Copy quick git clone command">Copy</button>
+          </div>
+          <p class="hero-footnote">
+            ComfyUI &ge; 0.45.0 &middot; Zero extra pip installs &middot; Collision-free <code>H3Realism*</code> nodes &middot; <a href="#upgrade">Upgrading from v1.x?</a>
+          </p>
+        </div>
+
+        <div class="loupe-stage" aria-label="Interactive pixel-aligned photo edit comparison">
+          <div class="loupe-toolbar">
+            <div class="pill-group" role="group" aria-label="Aligned 16 MP edit comparisons">
+              <button type="button" class="pill" data-preset="p2_cheek" aria-pressed="true">Kitchen Pores</button>
+              <button type="button" class="pill" data-preset="p2_shirt" aria-pressed="false">Linen &amp; Stripes</button>
+              <button type="button" class="pill" data-preset="p6_hands" aria-pressed="false">Hands &amp; Wool</button>
+            </div>
+            <button type="button" class="zoom-trigger" id="loupeZoomBtn" aria-label="Inspect current crop at true 1:1 native pixels">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              <span>1:1 Native</span>
+            </button>
+          </div>
+
+          <div class="compare-viewport" id="compareViewport">
+            <img id="compareBefore" src="assets/p2_cheek_fullband.jpg" alt="Full-band re-noising smoothed skin pores" width="960" height="640">
+            <div class="compare-after-layer">
+              <img id="compareAfter" src="assets/p2_cheek_spec6.jpg" alt="H3 Realism Spectral 6 natural skin pores and curls" width="960" height="640">
+            </div>
+            <span class="compare-tag left" id="tagBefore">Full-band (6 calls)</span>
+            <span class="compare-tag right" id="tagAfter">Spectral 6 (6 calls)</span>
+            <div class="compare-handle">
+              <span class="compare-line" aria-hidden="true"></span>
+              <button
+                type="button"
+                class="compare-knob"
+                id="compareKnob"
+                role="slider"
+                aria-label="Drag or use arrow keys to compare before and after at 1:1 pixels"
+                aria-valuemin="4"
+                aria-valuemax="96"
+                aria-valuenow="50"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 7 4 12 9 17"/><polyline points="15 7 20 12 15 17"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="loupe-caption">
+            <span id="loupeCaption">Kitchen Portrait (960&times;640 native crop from 16 MP, seed 5000). Full-band re-noising irons cheeks smooth; Spectral 6 preserves pores, lashes and curls in the same 6 calls.</span>
+            <span class="loupe-metrics tabular" id="loupeMetrics">6 calls &middot; Mean edit ID: 0.525 vs 0.508 (v1.1)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Spectral Re-Noising Interactive Math -->
+    <section class="section" id="spectral">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>How Frequency-Split Spectral Re-Noising Works</h2>
+          <p class="section-lead">
+            Plain Euler keeps pose and identity steady but leaves fine skin static. Full-band mid-step re-noising refreshes every spatial frequency at once—smoothing pores and mutating hands or clothing. Splitting noise in the 2D Fourier (FFT) domain locks large structure while refreshing fine texture, with zero extra model calls.
+          </p>
+        </div>
+
+        <div class="spectral-grid">
+          <div>
+            <div class="fft-panel">
+              <div class="fft-header">
+                <div class="fft-mode-block">
+                  <span class="fft-mode-label" id="fftModeLabel">Active preset: <strong>Spectral 6 (default)</strong></span>
+                  <span class="fft-plan-line tabular" id="fftPlanOut">6 calls &middot; Steps 0–1 Euler &middot; Steps 2–4 FFT &middot; Step 5 Euler</span>
+                </div>
+                <button type="button" class="fft-reset" id="fftResetBtn">Reset (0.25 / 0.85)</button>
+              </div>
+              <div class="fft-canvas-row">
+                <canvas id="fftCanvas" width="220" height="220" aria-label="2D Fourier frequency plane showing locked low-frequency core and refreshed high-frequency outer band"></canvas>
+                <div class="fft-legend">
+                  <div class="legend-item">
+                    <span class="swatch swatch-low" aria-hidden="true"></span>
+                    <div><strong>Low frequencies (r &le; cutoff)</strong><br>Locked deterministically to Euler. Protects pose, facial proportions, bare hands, props and printed text.</div>
+                  </div>
+                  <div class="legend-item">
+                    <span class="swatch swatch-high" aria-hidden="true"></span>
+                    <div><strong>High frequencies (r &gt; cutoff)</strong><br>Variance-preserving fresh noise draws organic pores, stray hairs and fabric weave without altering noise scale (exact Gaussian marginal).</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="fft-controls">
+                <div class="control-row">
+                  <label for="cutoffSlider"><span>spectral_cutoff <small class="default-hint">(default 0.25)</small></span><output id="cutoffOut" class="tabular">0.25</output></label>
+                  <input type="range" id="cutoffSlider" min="0.00" max="0.70" step="0.01" value="0.25">
+                </div>
+                <div class="control-row">
+                  <label for="etaSlider"><span>eta high-freq share <small class="default-hint">(default 0.85)</small></span><output id="etaOut" class="tabular">0.85</output></label>
+                  <input type="range" id="etaSlider" min="0.00" max="1.00" step="0.01" value="0.85">
+                </div>
+              </div>
+
+              <div class="fft-readout tabular">
+                <span>E<sub>mix</sub>(f) = &radic;(1 &minus; &eta;(f)&sup2;)&middot;E<sub>old</sub> + &eta;(f)&middot;E<sub>new</sub></span>
+                <span>Marginal: <strong>exact N(0, I)</strong> &middot; <span id="lockShareOut">15% low-freq locked</span></span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <p class="section-lead">
+              Click any schedule below to preview its frequency mask and step plan on the left. H3 Image uses six distilled output heads—every call receives its exact step interval (current-to-next noise level), and second passes automatically align to the matching tail.
+            </p>
+
+            <div class="schedule-list" role="group" aria-label="Sampler schedule presets">
+              <button
+                type="button"
+                class="schedule-row"
+                data-fft-preset="spectral6"
+                data-cutoff="0.25"
+                data-eta="0.85"
+                data-label="Spectral 6 (default)"
+                data-plan="6 calls · Steps 0–1 Euler · Steps 2–4 FFT · Step 5 Euler"
+                aria-label="Preview Spectral 6 default preset (6 calls, highest edit likeness)"
+                aria-pressed="true"
+              >
+                <span class="schedule-meta">
+                  <span class="schedule-title">spectral 6 (fast, highest likeness)</span>
+                  <span class="schedule-calls tabular">6 calls &middot; default</span>
+                </span>
+                <span class="step-strip tabular" aria-hidden="true">
+                  <span class="step-cell op-e"><span class="sigma">1.000</span><span class="op">Euler</span></span>
+                  <span class="step-cell op-e"><span class="sigma">0.968</span><span class="op">Euler</span></span>
+                  <span class="step-cell op-f"><span class="sigma">0.888</span><span class="op">FFT</span></span>
+                  <span class="step-cell op-f"><span class="sigma">0.750</span><span class="op">FFT</span></span>
+                  <span class="step-cell op-f"><span class="sigma">0.533</span><span class="op">FFT</span></span>
+                  <span class="step-cell op-e"><span class="sigma">0.232</span><span class="op">Euler</span></span>
+                </span>
+                <span class="schedule-desc">Beats v1.1 on facial likeness across all 3 test edits while running 25–45% faster. Keeps exact layout, hands, pores and linen weave.</span>
+              </button>
+
+              <button
+                type="button"
+                class="schedule-row"
+                data-fft-preset="spectral8"
+                data-cutoff="0.25"
+                data-eta="0.85"
+                data-label="Spectral + Texture 8"
+                data-plan="8 calls · Steps 0–1 Euler · Steps 2–3 FFT · Steps 4–5 2nd-order Heun+"
+                aria-label="Preview Spectral plus Texture 8 preset (8 calls, richest detail)"
+                aria-pressed="false"
+              >
+                <span class="schedule-meta">
+                  <span class="schedule-title">spectral + texture 8 (richest detail)</span>
+                  <span class="schedule-calls tabular">8 calls &middot; max micro-detail</span>
+                </span>
+                <span class="step-strip tabular" aria-hidden="true">
+                  <span class="step-cell op-e"><span class="sigma">1.000</span><span class="op">Euler</span></span>
+                  <span class="step-cell op-e"><span class="sigma">0.968</span><span class="op">Euler</span></span>
+                  <span class="step-cell op-f"><span class="sigma">0.888</span><span class="op">FFT</span></span>
+                  <span class="step-cell op-f"><span class="sigma">0.750</span><span class="op">FFT</span></span>
+                  <span class="step-cell op-h"><span class="sigma">0.533</span><span class="op">Heun+</span></span>
+                  <span class="step-cell op-h"><span class="sigma">0.232</span><span class="op">Heun+</span></span>
+                </span>
+                <span class="schedule-desc">Same 0.25/0.85 FFT mask on steps 2–3, then 2nd-order exponential Heun (<code>detail = 0.07</code>) on the last two steps for crisp individual hairs and pores in text-to-image portraits.</span>
+              </button>
+
+              <button
+                type="button"
+                class="schedule-row"
+                data-fft-preset="texture8"
+                data-cutoff="0.70"
+                data-eta="0.00"
+                data-label="Texture 8 (v1.1 deterministic)"
+                data-plan="8 calls · Steps 0–3 Euler (0% FFT) · Steps 4–5 2nd-order Heun+"
+                aria-label="Preview Texture 8 v1.1 classic deterministic preset (8 calls)"
+                aria-pressed="false"
+              >
+                <span class="schedule-meta">
+                  <span class="schedule-title">texture 8 (v1.1 classic)</span>
+                  <span class="schedule-calls tabular">8 calls &middot; deterministic</span>
+                </span>
+                <span class="step-strip tabular" aria-hidden="true">
+                  <span class="step-cell op-e"><span class="sigma">1.000</span><span class="op">Euler</span></span>
+                  <span class="step-cell op-e"><span class="sigma">0.968</span><span class="op">Euler</span></span>
+                  <span class="step-cell op-e"><span class="sigma">0.888</span><span class="op">Euler</span></span>
+                  <span class="step-cell op-e"><span class="sigma">0.750</span><span class="op">Euler</span></span>
+                  <span class="step-cell op-h"><span class="sigma">0.533</span><span class="op">Heun+</span></span>
+                  <span class="step-cell op-h"><span class="sigma">0.232</span><span class="op">Heun+</span></span>
+                </span>
+                <span class="schedule-desc">Exact v1.1 recipe preserved. Setting <code>texture_from = 0</code> (or <code>eta = 0</code> in Spectral 6) is pixel-identical to stock <code>sample_euler</code>.</span>
+              </button>
+
+              <button
+                type="button"
+                class="schedule-row schedule-ref"
+                data-fft-preset="fullband"
+                data-cutoff="0.00"
+                data-eta="0.95"
+                data-label="Full-band re-noising (reference)"
+                data-plan="6 calls · All spatial frequencies scrambled (0% low-freq lock)"
+                aria-label="Compare full-band re-noising reference with zero FFT split"
+                aria-pressed="false"
+              >
+                <span class="schedule-meta">
+                  <span class="schedule-title">Compare: full-band re-noising (no FFT split)</span>
+                  <span class="schedule-calls tabular">cutoff 0.00 &middot; eta 0.95</span>
+                </span>
+                <span class="schedule-desc">Re-noises every frequency equally—see how the entire spectrum turns amber, scrambling low-frequency layout and sanding away fine pores.</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Visual Proof Gallery -->
+    <section class="section" id="proof">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>16 MP Optical Proof &amp; True 1:1 Inspection</h2>
+          <p class="section-lead">
+            Click any amber reticle or side-by-side comparison below to open native 1:1 pixels from 16 MP renders on the same GPU, prompt, and seed. Inside the inspector, press <code>&larr;</code>/<code>&rarr;</code> or <code>Space</code> to blink A/B in place.
+          </p>
+        </div>
+
+        <!-- Block 1: Photo Edits (All 3 Benchmark Plates Carry Exact 1:1 Reticles) -->
+        <article class="proof-block">
+          <figure class="plate-frame">
+            <div class="plate-reticle-stage">
+              <img src="assets/p2_full_spec6.jpg" alt="Full 16 MP Kitchen Portrait photo edit rendered with H3 Realism Spectral 6" width="960" height="1435" loading="lazy">
+              <button type="button" class="reticle reticle-p2-cheek" data-lightbox="p2_cheek" aria-label="Open 1:1 Kitchen Portrait pores and curls comparison">
+                <span class="reticle-label">1:1 Pores</span>
+              </button>
+              <button type="button" class="reticle reticle-p2-shirt" data-lightbox="p2_shirt" aria-label="Open 1:1 Kitchen Portrait linen weave comparison">
+                <span class="reticle-label">1:1 Linen</span>
+              </button>
+            </div>
+            <figcaption>Kitchen Portrait (3360&times;5024, seed 5000) &middot; Spectral 6 (6 calls). Click either amber box for true 1:1 pixels.</figcaption>
+          </figure>
+
+          <div class="proof-detail">
+            <h3>Full-frame fidelity across all three edit benchmarks</h3>
+            <p>
+              Because Spectral 6 locks low frequencies to Euler while refreshing high frequencies in the FFT plane, hands stay bare, woven linen keeps its threads, and facial likeness beats v1.1 across all three 16 MP edit shots in just 6 model calls.
+            </p>
+            <div class="plate-pair">
+              <figure class="plate-frame compact-plate">
+                <div class="plate-reticle-stage">
+                  <img src="assets/p6_full_spec6.jpg" alt="Full 16 MP Snowy Forest edit rendered with H3 Realism Spectral 6" width="1196" height="800" loading="lazy">
+                  <button type="button" class="reticle reticle-p6-hands" data-lightbox="p6_hands" aria-label="Open 1:1 Snowy Forest bare hands vs mutated gloves comparison">
+                    <span class="reticle-label">1:1 Hands</span>
+                  </button>
+                </div>
+                <figcaption><strong>Snowy Forest (16 MP)</strong>Bare hands, axe wood grain and snow-dusted wool locked in place; full-band re-noising mutated the bare hands into leather gloves.</figcaption>
+              </figure>
+
+              <figure class="plate-frame compact-plate">
+                <div class="plate-reticle-stage">
+                  <img src="assets/p4_full_spec6.jpg" alt="16 MP Piano Portrait edit rendered with H3 Realism Spectral 6" width="1196" height="797" loading="lazy">
+                  <button type="button" class="reticle reticle-p4-face" data-lightbox="p4_face" aria-label="Open 1:1 Piano Portrait face and silver hair comparison">
+                    <span class="reticle-label">1:1 Face</span>
+                  </button>
+                </div>
+                <figcaption><strong>Piano Portrait (16 MP)</strong>Highest facial identity score across all samplers (<code>0.658</code> InsightFace ID vs <code>0.621</code> in v1.1) with crisp silver hair strands and natural pores.</figcaption>
+              </figure>
+            </div>
+          </div>
+        </article>
+
+        <!-- Block 2: Text-to-Image (Honest Side-by-Side Comparisons — Never Split-Faced) -->
+        <article class="proof-block reverse">
+          <div class="proof-detail">
+            <h3>Native Empty Picture fixes crusty text-to-image</h3>
+            <p>
+              Without a picture in its conditioning, H3 Image falls into an over-sharpened text-only mode with dark halos around hair and foliage. <strong>H3 Realism Empty Picture</strong> prepends a black 512 px picture's vision tokens on the first steps—no reference latent or checkpoint-specific calibration file needed. Because switching modes naturally shifts composition for the same seed, these comparisons are shown honestly side-by-side.
+            </p>
+            <div class="crop-pair">
+              <figure class="crop-card">
+                <button type="button" class="crop-zoom-btn" data-lightbox="elder_beard" data-initial-view="0" aria-label="Open 1:1 Elder Portrait Plain T2I crop">
+                  <img src="assets/elder_beard_plain.jpg" alt="Plain T2I 1:1 beard crop showing harsh over-sharpened crust" width="960" height="640" loading="lazy">
+                  <span class="crop-zoom-badge">1:1</span>
+                </button>
+                <figcaption><strong>Plain T2I (no fix)</strong>Crusty skin and over-sharpened halos around beard strands (Lap RMS 13.7).</figcaption>
+              </figure>
+              <figure class="crop-card winner">
+                <button type="button" class="crop-zoom-btn" data-lightbox="elder_beard" data-initial-view="1" aria-label="Open 1:1 Elder Portrait H3 Realism v2.0 crop">
+                  <img src="assets/elder_beard_v2.jpg" alt="H3 Realism v2.0 1:1 beard crop showing crisp individual white hairs and natural skin" width="960" height="640" loading="lazy">
+                  <span class="crop-zoom-badge">1:1</span>
+                </button>
+                <figcaption><strong>Empty Picture + Spectral 8</strong>Clean individual white beard hairs and organic skin texture (Lap RMS 7.9).</figcaption>
+              </figure>
+              <figure class="crop-card">
+                <button type="button" class="crop-zoom-btn" data-lightbox="lake_pines" data-initial-view="0" aria-label="Open 1:1 Misty Lake Plain T2I pine crop">
+                  <img src="assets/lake_1to1_plain.jpg" alt="Plain T2I 1:1 pine trees crop with harsh speckled sharpening crust" width="960" height="640" loading="lazy">
+                  <span class="crop-zoom-badge">1:1</span>
+                </button>
+                <figcaption><strong>Plain T2I (Misty Lake)</strong>Harsh speckled pine needles and brittle contrast (Lap RMS 34.8).</figcaption>
+              </figure>
+              <figure class="crop-card winner">
+                <button type="button" class="crop-zoom-btn" data-lightbox="lake_pines" data-initial-view="1" aria-label="Open 1:1 Misty Lake Empty Picture pine crop">
+                  <img src="assets/lake_1to1_v2.jpg" alt="H3 Realism Empty Picture 1:1 pine trees crop with smooth atmospheric mist" width="960" height="640" loading="lazy">
+                  <span class="crop-zoom-badge">1:1</span>
+                </button>
+                <figcaption><strong>Empty Picture (Misty Lake)</strong>Clean optical depth and atmospheric mist without crust (Lap RMS 11.8).</figcaption>
+              </figure>
+            </div>
+          </div>
+          <div class="t2i-plates-stack">
+            <figure class="plate-frame">
+              <div class="plate-reticle-stage">
+                <img src="assets/elder_full_v2.jpg" alt="Full 16 MP Elder Portrait rendered with H3 Realism v2.0" width="1100" height="1645" loading="lazy">
+                <button type="button" class="reticle reticle-elder-beard" data-lightbox="elder_beard" data-initial-view="1" aria-label="Open 1:1 Elder Portrait beard and skin comparison">
+                  <span class="reticle-label">1:1 Beard</span>
+                </button>
+              </div>
+              <figcaption>Elder Portrait (3360&times;5024, seed 5000) &middot; Empty Picture + Spectral 8.</figcaption>
+            </figure>
+            <figure class="plate-frame">
+              <div class="plate-reticle-stage">
+                <img src="assets/lake_full_v2.jpg" alt="Full 16 MP Misty Mountain Lake rendered with H3 Realism Empty Picture" width="1196" height="800" loading="lazy">
+                <button type="button" class="reticle reticle-lake-pines" data-lightbox="lake_pines" data-initial-view="1" aria-label="Open 1:1 Misty Mountain Lake pine comparison">
+                  <span class="reticle-label">1:1 Pines</span>
+                </button>
+              </div>
+              <figcaption>Misty Lake (5024&times;3360, seed 5002) &middot; Empty Picture.</figcaption>
+            </figure>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Node Reference + ComfyUI Wiring Schematic -->
+    <section class="section" id="nodes">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Five Collision-Free ComfyUI V3 Nodes</h2>
+          <p class="section-lead">
+            Most users only need <code>H3RealismKSampler</code> (plus <code>H3RealismEmptyPicture</code> for text-to-image). Every node lives under <code>MiniMax H3 Realism</code> with the uniform <code>H3Realism*</code> prefix so it installs cleanly alongside other MiniMax H3 packs, <code>RES4LYF</code>, and <code>KJNodes</code>.
+          </p>
+        </div>
+
+        <!-- Authentic ComfyUI Node-Wiring Diagram (Horizontally scrollable on narrow screens) -->
+        <div class="wiring-card" aria-label="ComfyUI node wiring schematic">
+          <div class="wiring-head">
+            <span class="wiring-title">Quick ComfyUI Graph Wiring</span>
+            <span class="wiring-scroll-hint" aria-hidden="true">Scroll diagram &rarr;</span>
+            <span class="wiring-legend">
+              <span><i class="dot dot-model" aria-hidden="true"></i>MODEL</span>
+              <span><i class="dot dot-cond" aria-hidden="true"></i>CONDITIONING</span>
+              <span><i class="dot dot-latent" aria-hidden="true"></i>LATENT / SIZE</span>
+            </span>
+          </div>
+          <div class="wiring-scroll" tabindex="0" aria-label="Scrollable ComfyUI node wiring diagram">
+            <svg class="wiring-svg" viewBox="0 0 980 248" role="img" aria-label="Diagram showing Recommended 1-Node KSampler path (Model and Prompt through optional H3RealismEmptyPicture and H3RealismResolutionSelector into H3RealismKSampler then VAE Decode) and Advanced SamplerCustomAdvanced path (H3RealismSampler plus H3RealismSigmas)">
+              <!-- Wires: Recommended Path -->
+              <path class="wire wire-model" d="M 188 64 C 310 64, 440 60, 560 68" />
+              <path class="wire wire-cond" d="M 188 122 C 218 122, 228 112, 258 112" />
+              <path class="wire wire-cond" d="M 484 112 C 516 112, 528 96, 560 96" />
+              <path class="wire wire-latent" d="M 484 176 C 518 176, 526 124, 560 124" />
+              <path class="wire wire-latent" d="M 796 96 C 824 96, 830 96, 852 96" />
+
+              <!-- Node: Load H3 Model & Prompt -->
+              <g class="cnode">
+                <rect x="16" y="34" width="172" height="114" rx="6" />
+                <path class="cnode-head" d="M 16 40 a 6 6 0 0 1 6 -6 h 160 a 6 6 0 0 1 6 6 v 20 h -172 z" />
+                <text x="28" y="51" class="cnode-title">H3 Model &amp; Prompt</text>
+                <text x="172" y="68" text-anchor="end" class="cnode-port">MODEL</text>
+                <circle cx="188" cy="64" r="4.5" class="dot-svg-model" />
+                <text x="172" y="126" text-anchor="end" class="cnode-port">POSITIVE</text>
+                <circle cx="188" cy="122" r="4.5" class="dot-svg-cond" />
+                <text x="28" y="96" class="cnode-sub">Checkpoint + Qwen3-VL</text>
+              </g>
+
+              <!-- Node: H3RealismEmptyPicture -->
+              <g class="cnode cnode-opt">
+                <rect x="258" y="76" width="226" height="62" rx="6" />
+                <path class="cnode-head" d="M 258 82 a 6 6 0 0 1 6 -6 h 214 a 6 6 0 0 1 6 6 v 19 h -226 z" />
+                <text x="270" y="92" class="cnode-title">H3RealismEmptyPicture</text>
+                <circle cx="258" cy="112" r="4.5" class="dot-svg-cond" />
+                <text x="270" y="116" class="cnode-sub">T2I only (auto pass-through on edits)</text>
+                <circle cx="484" cy="112" r="4.5" class="dot-svg-cond" />
+              </g>
+
+              <!-- Node: H3RealismResolutionSelector -->
+              <g class="cnode">
+                <rect x="258" y="148" width="226" height="58" rx="6" />
+                <path class="cnode-head" d="M 258 154 a 6 6 0 0 1 6 -6 h 214 a 6 6 0 0 1 6 6 v 19 h -226 z" />
+                <text x="270" y="164" class="cnode-title">H3RealismResolutionSelector</text>
+                <text x="270" y="188" class="cnode-sub">4–96 MP+ &rarr; Empty Latent</text>
+                <circle cx="484" cy="176" r="4.5" class="dot-svg-latent" />
+              </g>
+
+              <!-- Node: H3RealismKSampler (Primary Highlight) -->
+              <g class="cnode cnode-primary">
+                <rect x="560" y="34" width="236" height="130" rx="6" />
+                <path class="cnode-head-accent" d="M 560 40 a 6 6 0 0 1 6 -6 h 224 a 6 6 0 0 1 6 6 v 20 h -236 z" />
+                <text x="572" y="51" class="cnode-title-dark">H3RealismKSampler</text>
+                <circle cx="560" cy="68" r="4.5" class="dot-svg-model" />
+                <text x="572" y="72" class="cnode-port">model</text>
+                <circle cx="560" cy="96" r="4.5" class="dot-svg-cond" />
+                <text x="572" y="100" class="cnode-port">positive</text>
+                <circle cx="560" cy="124" r="4.5" class="dot-svg-latent" />
+                <text x="572" y="128" class="cnode-port">latent_image</text>
+                <text x="780" y="100" text-anchor="end" class="cnode-port">LATENT</text>
+                <circle cx="796" cy="96" r="4.5" class="dot-svg-latent" />
+                <text x="572" y="152" class="cnode-pill">mode: spectral 6 (default)</text>
+              </g>
+
+              <!-- Node: VAE Decode -->
+              <g class="cnode">
+                <rect x="852" y="64" width="112" height="64" rx="6" />
+                <path class="cnode-head" d="M 852 70 a 6 6 0 0 1 6 -6 h 100 a 6 6 0 0 1 6 6 v 19 h -112 z" />
+                <text x="864" y="80" class="cnode-title">VAE Decode</text>
+                <circle cx="852" cy="96" r="4.5" class="dot-svg-latent" />
+                <text x="864" y="108" class="cnode-sub">16–96 MP PNG</text>
+              </g>
+
+              <!-- Footer Callout: Modular Path -->
+              <text x="560" y="196" class="cnode-foot-title">Modular / Multi-pass Graphs:</text>
+              <text x="560" y="215" class="cnode-foot-sub">Swap H3RealismKSampler for H3RealismSampler + H3RealismSigmas</text>
+              <text x="560" y="233" class="cnode-foot-sub">inside ComfyUI's SamplerCustomAdvanced (auto tail-step alignment).</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="table-scroll">
+          <table class="responsive-table">
+            <thead>
+              <tr>
+                <th>Node</th>
+                <th>Node ID</th>
+                <th>Output</th>
+                <th>Role</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="row-highlight">
+                <td data-label="Node">H3 Realism KSampler</td>
+                <td data-label="Node ID"><code>H3RealismKSampler</code></td>
+                <td data-label="Output"><code>LATENT</code></td>
+                <td data-label="Role">Drop-in all-in-one KSampler: <code>model</code>, <code>positive</code>, <code>latent_image</code>, <code>seed</code>, <code>mode</code>. Advanced spectral and texture knobs stay tucked away until needed.</td>
+              </tr>
+              <tr>
+                <td data-label="Node">H3 Realism Sampler</td>
+                <td data-label="Node ID"><code>H3RealismSampler</code></td>
+                <td data-label="Output"><code>SAMPLER</code></td>
+                <td data-label="Role">Modular sampler for <code>SamplerCustomAdvanced</code> graphs. Automatically aligns to the matching tail step when given partial second-pass sigmas.</td>
+              </tr>
+              <tr>
+                <td data-label="Node">H3 Realism Sigmas</td>
+                <td data-label="Node ID"><code>H3RealismSigmas</code></td>
+                <td data-label="Output"><code>SIGMAS</code></td>
+                <td data-label="Role">Reads H3's distilled 6-step grid dynamically from the checkpoint: <code>simple 6</code> (matches stock KSampler layout per seed) or <code>exact grid</code>.</td>
+              </tr>
+              <tr>
+                <td data-label="Node">H3 Realism Empty Picture (T2I)</td>
+                <td data-label="Node ID"><code>H3RealismEmptyPicture</code></td>
+                <td data-label="Output"><code>CONDITIONING</code></td>
+                <td data-label="Role">Prepends a black 512 px picture's vision tokens on steps 0–1 (<code>end = 0.25</code> default; <code>0.10</code> for step 0 only). Automatically passes edit conditioning through untouched.</td>
+              </tr>
+              <tr>
+                <td data-label="Node">H3 Realism Resolution Selector</td>
+                <td data-label="Node ID"><code>H3RealismResolutionSelector</code></td>
+                <td data-label="Output"><code>width</code>, <code>height</code></td>
+                <td data-label="Role">Aspect ratio + megapixel selector with live <code>ResolutionPreview</code>, rounded to 32 px H3 tokens, removing ComfyUI's 16 MP cap up to 96 MP+ (179 MP max).</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Benchmarks & Resolution Ceiling -->
+    <section class="section" id="benchmarks">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Measured Benchmarks</h2>
+          <p class="section-lead">
+            Measured on an RTX PRO 6000 Blackwell (96 GB), ComfyUI 0.45.6, <code>minimax_h3_image_pruned_int8_convrot</code>, identical prompts and seeds at 16 MP.
+          </p>
+        </div>
+
+        <div class="recipe-bar" role="note" aria-label="Quick mode recipe for Photo Edits versus Text-to-Image">
+          <div><strong>Photo Edits:</strong> Wire <code>H3RealismKSampler</code> on <code>spectral 6</code> — fastest, highest facial likeness, locks hands, pores and woven fabric.</div>
+          <div><strong>Text-to-Image:</strong> Add <code>H3RealismEmptyPicture</code> (<code>end = 0.25</code>) + <code>spectral + texture 8</code> — eliminates text-only halos with crisp hair and skin.</div>
+        </div>
+
+        <div class="metric-glossary" role="note" aria-label="How to read benchmark metrics">
+          <div><strong>InsightFace ID:</strong> Higher means closer to the reference face—but aggressive smoothing can artificially inflate cosine similarity while erasing pores (always inspect 1:1).</div>
+          <div><strong>Laplacian RMS:</strong> Edge-sharpness sweet spot. Natural 16 MP skin sits around <code>5–9</code>; values above <code>13</code> indicate crusty sharpening halos, while low drops signal plastic smoothing.</div>
+          <div><strong>hf/mid ratio:</strong> High-to-mid spatial frequency energy ratio. Lower values on T2I (<code>0.06–0.09</code> vs <code>0.16–0.21</code>) confirm elimination of harsh fine stipple and crunchy needles.</div>
+          <div><strong>Rank-1 steering:</strong> Single-vector activation shift tested as a calibration-based alternative to native Empty Picture mode switching.</div>
+        </div>
+
+        <div class="table-scroll">
+          <table class="tabular responsive-table">
+            <thead>
+              <tr>
+                <th>Photo Edits (16 MP, seed 5000)</th>
+                <th>Calls</th>
+                <th>Kitchen ID (Lap)</th>
+                <th>Piano ID (Lap)</th>
+                <th>Snowy Forest ID (Lap)</th>
+                <th>Mean ID</th>
+                <th>1:1 Quality Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="row-highlight">
+                <td data-label="Method">H3 Realism Spectral 6 (default)</td>
+                <td data-label="Calls">6</td>
+                <td data-label="Kitchen">0.487 (5.39)</td>
+                <td data-label="Piano">0.658 (4.65)</td>
+                <td data-label="Snowy Forest">0.429 (6.26)</td>
+                <td data-label="Mean ID">0.525</td>
+                <td data-label="1:1 Notes">Beat v1.1 on all 3 shots, 25–45% faster, exact hands, pores and linen weave</td>
+              </tr>
+              <tr>
+                <td data-label="Method">H3 Realism Spectral + Texture 8</td>
+                <td data-label="Calls">8</td>
+                <td data-label="Kitchen">0.482 (5.47)</td>
+                <td data-label="Piano">0.635 (4.70)</td>
+                <td data-label="Snowy Forest">0.393 (6.52)</td>
+                <td data-label="Mean ID">0.503</td>
+                <td data-label="1:1 Notes">Richest pores and fabric micro-detail on edits &amp; sharpest T2I portraits</td>
+              </tr>
+              <tr>
+                <td data-label="Method">v1.1 Classic Texture 8</td>
+                <td data-label="Calls">8</td>
+                <td data-label="Kitchen">0.477 (5.50)</td>
+                <td data-label="Piano">0.621 (4.73)</td>
+                <td data-label="Snowy Forest">0.426 (6.67)</td>
+                <td data-label="Mean ID">0.508</td>
+                <td data-label="1:1 Notes">Reference micro-detail; slower than Spectral 6</td>
+              </tr>
+              <tr>
+                <td data-label="Method">Full-band mid re-noise (s_noise 0.95)</td>
+                <td data-label="Calls">6</td>
+                <td data-label="Kitchen">0.585* (5.41)</td>
+                <td data-label="Piano">0.635 (4.75)</td>
+                <td data-label="Snowy Forest">0.437 (5.45)</td>
+                <td data-label="Mean ID">0.552*</td>
+                <td data-label="1:1 Notes">*Smoothed skin pores into plastic on Kitchen; mutated bare hands into leather gloves on Snowy Forest</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-scroll mt-lg">
+          <table class="tabular responsive-table">
+            <thead>
+              <tr>
+                <th>Text-to-Image (16 MP)</th>
+                <th>Misty Lake Lap (hf/mid)</th>
+                <th>Elder Portrait Lap (hf/mid)</th>
+                <th>1:1 Visual Assessment</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="row-highlight">
+                <td data-label="Method">H3 Realism Empty Picture (0.25, default) + Sampler</td>
+                <td data-label="Misty Lake">11.80 (0.091)</td>
+                <td data-label="Elder Portrait">7.85 (0.063)</td>
+                <td data-label="1:1 Notes">Cleanest skin, organic pores, crisp individual beard hairs, zero halos</td>
+              </tr>
+              <tr>
+                <td data-label="Method">H3 Realism Empty Picture (0.10) + Spectral 8</td>
+                <td data-label="Misty Lake">12.28 (0.104)</td>
+                <td data-label="Elder Portrait">7.93 (0.066)</td>
+                <td data-label="1:1 Notes">Step-0-only vision tokens; sharpest beard strands and wood grain</td>
+              </tr>
+              <tr>
+                <td data-label="Method">Rank-1 mean steering (0.7) + full-band re-noise (0.95)</td>
+                <td data-label="Misty Lake">24.72 (0.154)</td>
+                <td data-label="Elder Portrait">12.92 (0.158)</td>
+                <td data-label="1:1 Notes">Soft/fuzzy beard strands, fine stipple grain on forehead, harsher pines</td>
+              </tr>
+              <tr>
+                <td data-label="Method">Rank-1 mean steering (0.7) + our sampler</td>
+                <td data-label="Misty Lake">32.88 (0.164)</td>
+                <td data-label="Elder Portrait">15.16 (0.096)</td>
+                <td data-label="1:1 Notes">Still crusty—rank-1 steering alone does not exit text-only mode</td>
+              </tr>
+              <tr>
+                <td data-label="Method">Plain T2I (no Empty Picture)</td>
+                <td data-label="Misty Lake">34.77 (0.207)</td>
+                <td data-label="Elder Portrait">13.68 (0.090)</td>
+                <td data-label="1:1 Notes">Crusty, over-sharpened edges and dark halos around hair</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="res-scale">
+          <h3>Resolution Ceiling Test: How Big Can H3 Image Go?</h3>
+          <p>
+            Swept from 4 MP to 179 MP (<code>10912&times;16384</code>) on a 96 GB RTX PRO 6000. Memory was never the bottleneck (55 GB peak at 179 MP, no tiled decode). Quality holds cleanly to 96 MP; from 128 MP upward, H3's rotary position scaling (area-normalized RoPE) compresses neighbor spacing below <code>0.10</code> and fine textures break into 32 px token blocks across both int8 and bf16 checkpoints.
+          </p>
+          <div class="res-bar tabular">
+            <div class="res-seg">
+              <strong>4 – 8 MP</strong>
+              <span>12–16 s &middot; Soft, little micro-detail</span>
+            </div>
+            <div class="res-seg sweet">
+              <strong>16 – 64 MP (Practical)</strong>
+              <span>28 s – 2.2 min &middot; Single hairs, pores, fabric weave</span>
+            </div>
+            <div class="res-seg ceiling">
+              <strong>96 MP (Ceiling)</strong>
+              <span>4.1 min &middot; Verified clean limit (47 GB)</span>
+            </div>
+            <div class="res-seg break">
+              <strong>128 – 179 MP (Limit)</strong>
+              <span>6.6–11.6 min &middot; 32 px token blocks in stripes &amp; knit</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Install & Upgrade -->
+    <section class="section" id="install">
+      <div class="wrap install-layout">
+        <div>
+          <div class="section-head mb-md">
+            <h2>Install &amp; Quick Start</h2>
+          </div>
+          <ol class="step-ol">
+            <li>
+              <h3>Clone into ComfyUI/custom_nodes</h3>
+              <p>Requires ComfyUI <code>&ge; 0.45.0</code> (V3 node API + MiniMax H3 Image support). If nodes fail to appear after restart, update ComfyUI first. No extra pip packages required.</p>
+              <div class="cmd-strip cmd-strip-wide">
+                <code id="installCmd">cd ComfyUI/custom_nodes &amp;&amp; git clone https://github.com/igorls/comfyui-h3-sampler</code>
+                <button type="button" class="cmd-copy" data-copy-target="installCmd" aria-label="Copy full install command">Copy</button>
+              </div>
+            </li>
+            <li>
+              <h3>Load the v2.0 template workflows</h3>
+              <p>Restart ComfyUI and open the template browser under <strong>H3 Realism Sampler</strong>, or download the packaged edit and text-to-image zips from <a href="https://civitai.red/models/3054818/minimax-h3-image-realism-edit-text-to-image-workflows-16-mp-comfyui" target="_blank" rel="noopener">CivitAI</a>. Every loader includes official Comfy-Org model download metadata.</p>
+            </li>
+            <li>
+              <h3>Run the CPU test suite (optional)</h3>
+              <p>Verifies 2D FFT white-noise invariance, Euler parity, distilled head routing, second-pass tail alignment, V3 schemas and unique node IDs without a GPU.</p>
+              <div class="cmd-strip cmd-strip-wide">
+                <code id="testCmd">COMFYUI_PATH=/path/to/ComfyUI python tests/test_h3_realism.py</code>
+                <button type="button" class="cmd-copy" data-copy-target="testCmd" aria-label="Copy CPU test suite command">Copy</button>
+              </div>
+            </li>
+          </ol>
+        </div>
+
+        <aside class="upgrade-box" id="upgrade">
+          <h3>Upgrading from v1.x</h3>
+          <div class="breaking-callout" role="note">
+            <strong>Breaking change in v2.0:</strong> Running <code>git pull</code> replaces <code>H3Image*</code> nodes with <code>H3Realism*</code> nodes. Existing v1.x graphs will show missing nodes until you re-import the v2.0 workflows from <a href="https://github.com/igorls/comfyui-h3-sampler/tree/main/example_workflows" target="_blank" rel="noopener"><code>example_workflows/</code></a> or CivitAI.
+          </div>
+          <p>
+            To publish cleanly on the ComfyUI Registry and avoid generic node ID clashes with other MiniMax H3 custom node packs, v2.0 uses the uniform <code>H3Realism*</code> prefix:
+          </p>
+          <ul>
+            <li><code>H3ImageKSampler</code> &rarr; <code>H3RealismKSampler</code></li>
+            <li><code>H3ImageSampler</code> &rarr; <code>H3RealismSampler</code></li>
+            <li><code>H3ImageSigmas</code> &rarr; <code>H3RealismSigmas</code></li>
+            <li><code>H3ImageEmptyPicture</code> &rarr; <code>H3RealismEmptyPicture</code></li>
+            <li>New: <code>H3RealismResolutionSelector</code> (up to 96 MP+ with live preview)</li>
+          </ul>
+          <div class="cmd-strip cmd-strip-wide upgrade-cmd">
+            <code id="upgradeCmd">cd ComfyUI/custom_nodes/comfyui-h3-sampler &amp;&amp; git pull</code>
+            <button type="button" class="cmd-copy" data-copy-target="upgradeCmd" aria-label="Copy v2.0 git pull upgrade command">Copy</button>
+          </div>
+          <p class="upgrade-foot">
+            Restart ComfyUI and load the updated v2.0 template workflows.
+          </p>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <div>GPL-3.0 &middot; Built for MiniMax H3 Image in ComfyUI. Credits: MiniMax, ComfyUI, RES4LYF (ClownsharkBatwing), and Kijai (ComfyUI-KJNodes).</div>
+      <div class="footer-links">
+        <a href="https://github.com/igorls/comfyui-h3-sampler" target="_blank" rel="noopener">GitHub Repo</a>
+        <a href="https://github.com/igorls/comfyui-h3-sampler/issues" target="_blank" rel="noopener">Issues</a>
+        <a href="https://civitai.red/models/3054818/minimax-h3-image-realism-edit-text-to-image-workflows-16-mp-comfyui" target="_blank" rel="noopener">CivitAI Page</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Polite Screen-Reader Status Announcements -->
+  <div id="liveStatus" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- True 1:1 Native-Pixel Inspection Lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-labelledby="lightboxTitle" hidden>
+    <div class="lightbox-backdrop" data-lightbox-close></div>
+    <div class="lightbox-panel" id="lightboxPanel">
+      <div class="lightbox-bar">
+        <div class="lightbox-meta">
+          <strong id="lightboxTitle">1:1 Native Inspection</strong>
+          <span id="lightboxSub" class="tabular">960&times;640 native pixels</span>
+        </div>
+        <div class="lightbox-controls">
+          <div class="pill-group" id="lightboxTabs" role="group" aria-label="Switch comparison variant"></div>
+          <button type="button" class="btn btn-ghost btn-sm" id="lightboxScaleBtn" aria-pressed="true">1:1 Native (100%)</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="lightboxCloseBtn" data-lightbox-close aria-label="Close 1:1 inspector">Close (Esc)</button>
+        </div>
+      </div>
+      <div class="lightbox-stage mode-native" id="lightboxStage">
+        <img id="lightboxImg" src="assets/p2_cheek_spec6.jpg" alt="1:1 native inspection view" width="960" height="640">
+      </div>
+      <div class="lightbox-foot">
+        <span id="lightboxNote">Use &larr; / &rarr; or Space to blink variants in place. Scroll to pan 1:1 pixels.</span>
+        <span class="tabular" id="lightboxDims">960 &times; 640 px</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

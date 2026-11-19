@@ -505,7 +505,7 @@
   },
   {
    "id": 30,
-   "type": "ResolutionSelector",
+   "type": "H3RealismResolutionSelector",
    "pos": [
     460,
     420
@@ -574,18 +574,18 @@
      ]
     }
    ],
-   "title": "Output size (16 MP = the real-photo look)",
+   "title": "Output size (16-64 MP practical, 96 MP ceiling)",
    "properties": {
-    "Node name for S&R": "ResolutionSelector"
+    "Node name for S&R": "H3RealismResolutionSelector"
    },
    "widgets_values": [
     "2:3 (Portrait Photo)",
-    16,
+    16.0,
     32
    ],
    "widgets_values_named": {
     "aspect_ratio": "2:3 (Portrait Photo)",
-    "megapixels": 16,
+    "megapixels": 16.0,
     "multiple": 32
    },
    "color": "#232",
@@ -686,7 +686,7 @@
   },
   {
    "id": 60,
-   "type": "H3ImageKSampler",
+   "type": "H3RealismKSampler",
    "pos": [
     1080,
     420
@@ -727,11 +727,11 @@
      "link": null
     },
     {
-     "localized_name": "texture_from",
-     "name": "texture_from",
-     "type": "FLOAT",
+     "localized_name": "mode",
+     "name": "mode",
+     "type": "COMBO",
      "widget": {
-      "name": "texture_from"
+      "name": "mode"
      },
      "link": null
     },
@@ -745,11 +745,38 @@
      "link": null
     },
     {
+     "localized_name": "spectral_cutoff",
+     "name": "spectral_cutoff",
+     "type": "FLOAT",
+     "widget": {
+      "name": "spectral_cutoff"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "hf_scale",
+     "name": "hf_scale",
+     "type": "FLOAT",
+     "widget": {
+      "name": "hf_scale"
+     },
+     "link": null
+    },
+    {
      "localized_name": "detail",
      "name": "detail",
      "type": "FLOAT",
      "widget": {
       "name": "detail"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "texture_from",
+     "name": "texture_from",
+     "type": "FLOAT",
+     "widget": {
+      "name": "texture_from"
      },
      "link": null
     },
@@ -774,22 +801,28 @@
     }
    ],
    "properties": {
-    "Node name for S&R": "H3ImageKSampler"
+    "Node name for S&R": "H3RealismKSampler"
    },
    "widgets_values": [
     5000,
     "randomize",
-    0.55,
-    0.65,
+    "spectral 6 (fast, highest likeness)",
+    0.85,
+    0.25,
+    1.0,
     0.07,
+    0.55,
     "simple 6 (same layout as KSampler)"
    ],
    "widgets_values_named": {
     "seed": 5000,
     "control_after_generate": "randomize",
-    "texture_from": 0.55,
-    "eta": 0.65,
+    "mode": "spectral 6 (fast, highest likeness)",
+    "eta": 0.85,
+    "spectral_cutoff": 0.25,
+    "hf_scale": 1.0,
     "detail": 0.07,
+    "texture_from": 0.55,
     "schedule": "simple 6 (same layout as KSampler)"
    }
   },
@@ -811,10 +844,10 @@
    "outputs": [],
    "properties": {},
    "widgets_values": [
-    "## H3 Image: realism edit\n1. **Picture 1**: the photo to edit (the person or product).\n2. **Picture 2**: a tight crop of the face from Picture 1 (head and some hair, 1024 px or more if the photo allows). It is the biggest likeness gain we measured.\n3. **Prompt**: keep the first three sentences and the last three. Replace the scene in between: framing, pose, action, expression, clothing, place, light.\n4. Pick the aspect ratio, then **Run** (Ctrl+Enter).\n\n**Why it looks real:** H3 only draws photographic detail at 16-20 MP. The H3 Image KSampler sets structure with plain Euler on H3's own distilled grid and adds skin and hair texture on the last two steps.\n\n**Seed:** on the sampler; each queue takes a new one. To refine a good result, drag it back into ComfyUI (it carries its workflow and seed), set the seed to fixed and change only the prompt.\n\n**Time:** about 30-50 s per image at 16 MP on an RTX PRO 6000 (96 GB)."
+    "## H3 Image: realism edit (v2.0)\n1. **Picture 1**: the photo to edit (the person or product).\n2. **Picture 2**: a tight crop of the face from Picture 1 (head and some hair, 1024 px or more if the photo allows). It is the biggest likeness gain we measured.\n3. **Prompt**: keep the first three sentences and the last three. Replace the scene in between: framing, pose, action, expression, clothing, place, light.\n4. Pick the aspect ratio and megapixels (16–64 MP practical; 96 MP verified clean ceiling), then **Run** (Ctrl+Enter).\n\n**Why it looks real:** H3 only draws photographic detail at 16+ MP. **H3 Realism KSampler** defaults to **Spectral 6** (6 model calls): plain Euler on the early layout steps, then 2D FFT frequency-split re-noising that locks low-frequency face proportions, hands and props while refreshing high-frequency skin and fabric detail. Switch `mode` to `spectral + texture 8` for maximum micro-detail.\n\n**Seed:** on the sampler; each queue takes a new one. To refine a good result, drag it back into ComfyUI (it carries its workflow and seed), set the seed to fixed and change only the prompt.\n\n**Time:** about 20–35 s per 16 MP edit on an RTX PRO 6000 (96 GB)."
    ],
    "widgets_values_named": {
-    "text": "## H3 Image: realism edit\n1. **Picture 1**: the photo to edit (the person or product).\n2. **Picture 2**: a tight crop of the face from Picture 1 (head and some hair, 1024 px or more if the photo allows). It is the biggest likeness gain we measured.\n3. **Prompt**: keep the first three sentences and the last three. Replace the scene in between: framing, pose, action, expression, clothing, place, light.\n4. Pick the aspect ratio, then **Run** (Ctrl+Enter).\n\n**Why it looks real:** H3 only draws photographic detail at 16-20 MP. The H3 Image KSampler sets structure with plain Euler on H3's own distilled grid and adds skin and hair texture on the last two steps.\n\n**Seed:** on the sampler; each queue takes a new one. To refine a good result, drag it back into ComfyUI (it carries its workflow and seed), set the seed to fixed and change only the prompt.\n\n**Time:** about 30-50 s per image at 16 MP on an RTX PRO 6000 (96 GB)."
+    "text": "## H3 Image: realism edit (v2.0)\n1. **Picture 1**: the photo to edit (the person or product).\n2. **Picture 2**: a tight crop of the face from Picture 1 (head and some hair, 1024 px or more if the photo allows). It is the biggest likeness gain we measured.\n3. **Prompt**: keep the first three sentences and the last three. Replace the scene in between: framing, pose, action, expression, clothing, place, light.\n4. Pick the aspect ratio and megapixels (16–64 MP practical; 96 MP verified clean ceiling), then **Run** (Ctrl+Enter).\n\n**Why it looks real:** H3 only draws photographic detail at 16+ MP. **H3 Realism KSampler** defaults to **Spectral 6** (6 model calls): plain Euler on the early layout steps, then 2D FFT frequency-split re-noising that locks low-frequency face proportions, hands and props while refreshing high-frequency skin and fabric detail. Switch `mode` to `spectral + texture 8` for maximum micro-detail.\n\n**Seed:** on the sampler; each queue takes a new one. To refine a good result, drag it back into ComfyUI (it carries its workflow and seed), set the seed to fixed and change only the prompt.\n\n**Time:** about 20–35 s per 16 MP edit on an RTX PRO 6000 (96 GB)."
    },
    "color": "#432",
    "bgcolor": "#653"
@@ -863,10 +896,10 @@
    "outputs": [],
    "properties": {},
    "widgets_values": [
-    "**H3 Image KSampler** (comfyui-h3-sampler): plain Euler on H3's distilled 6-step grid for structure, then a second-order step with fresh noise and extra detail on the last two steps for texture. The tested settings are under \"advanced inputs\"; leave them as they are. Needs the comfyui-h3-sampler node pack (github.com/igorls/comfyui-h3-sampler); without it, use the RES4LYF version of this workflow."
+    "**H3 Realism KSampler** (comfyui-h3-sampler v2.0, github.com/igorls/comfyui-h3-sampler): runs plain Euler on H3's distilled 6-step grid for layout, then variance-preserving 2D FFT frequency-split re-noising on steps 2–4 (`spectral 6`, 6 calls — faster and higher edit likeness than v1.1) or adds exponential Heun texture on steps 4–5 (`spectral + texture 8`, 8 calls). Uses the uniform `H3Realism*` node IDs so it installs cleanly alongside other H3 node packs. Without the pack, use the RES4LYF version of this workflow."
    ],
    "widgets_values_named": {
-    "text": "**H3 Image KSampler** (comfyui-h3-sampler): plain Euler on H3's distilled 6-step grid for structure, then a second-order step with fresh noise and extra detail on the last two steps for texture. The tested settings are under \"advanced inputs\"; leave them as they are. Needs the comfyui-h3-sampler node pack (github.com/igorls/comfyui-h3-sampler); without it, use the RES4LYF version of this workflow."
+    "text": "**H3 Realism KSampler** (comfyui-h3-sampler v2.0, github.com/igorls/comfyui-h3-sampler): runs plain Euler on H3's distilled 6-step grid for layout, then variance-preserving 2D FFT frequency-split re-noising on steps 2–4 (`spectral 6`, 6 calls — faster and higher edit likeness than v1.1) or adds exponential Heun texture on steps 4–5 (`spectral + texture 8`, 8 calls). Uses the uniform `H3Realism*` node IDs so it installs cleanly alongside other H3 node packs. Without the pack, use the RES4LYF version of this workflow."
    },
    "color": "#432",
    "bgcolor": "#653"

@@ -362,7 +362,7 @@
   },
   {
    "id": 30,
-   "type": "ResolutionSelector",
+   "type": "H3RealismResolutionSelector",
    "pos": [
     460,
     420
@@ -431,18 +431,18 @@
      ]
     }
    ],
-   "title": "Output size (16 MP = the real-photo look)",
+   "title": "Output size (16-64 MP practical, 96 MP ceiling)",
    "properties": {
-    "Node name for S&R": "ResolutionSelector"
+    "Node name for S&R": "H3RealismResolutionSelector"
    },
    "widgets_values": [
     "2:3 (Portrait Photo)",
-    16,
+    16.0,
     32
    ],
    "widgets_values_named": {
     "aspect_ratio": "2:3 (Portrait Photo)",
-    "megapixels": 16,
+    "megapixels": 16.0,
     "multiple": 32
    },
    "color": "#232",
@@ -543,7 +543,7 @@
   },
   {
    "id": 60,
-   "type": "H3ImageKSampler",
+   "type": "H3RealismKSampler",
    "pos": [
     1080,
     420
@@ -584,11 +584,11 @@
      "link": null
     },
     {
-     "localized_name": "texture_from",
-     "name": "texture_from",
-     "type": "FLOAT",
+     "localized_name": "mode",
+     "name": "mode",
+     "type": "COMBO",
      "widget": {
-      "name": "texture_from"
+      "name": "mode"
      },
      "link": null
     },
@@ -602,11 +602,38 @@
      "link": null
     },
     {
+     "localized_name": "spectral_cutoff",
+     "name": "spectral_cutoff",
+     "type": "FLOAT",
+     "widget": {
+      "name": "spectral_cutoff"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "hf_scale",
+     "name": "hf_scale",
+     "type": "FLOAT",
+     "widget": {
+      "name": "hf_scale"
+     },
+     "link": null
+    },
+    {
      "localized_name": "detail",
      "name": "detail",
      "type": "FLOAT",
      "widget": {
       "name": "detail"
+     },
+     "link": null
+    },
+    {
+     "localized_name": "texture_from",
+     "name": "texture_from",
+     "type": "FLOAT",
+     "widget": {
+      "name": "texture_from"
      },
      "link": null
     },
@@ -631,22 +658,28 @@
     }
    ],
    "properties": {
-    "Node name for S&R": "H3ImageKSampler"
+    "Node name for S&R": "H3RealismKSampler"
    },
    "widgets_values": [
     5000,
     "randomize",
-    0.55,
-    0.65,
+    "spectral + texture 8 (richest detail)",
+    0.85,
+    0.25,
+    1.0,
     0.07,
+    0.55,
     "simple 6 (same layout as KSampler)"
    ],
    "widgets_values_named": {
     "seed": 5000,
     "control_after_generate": "randomize",
-    "texture_from": 0.55,
-    "eta": 0.65,
+    "mode": "spectral + texture 8 (richest detail)",
+    "eta": 0.85,
+    "spectral_cutoff": 0.25,
+    "hf_scale": 1.0,
     "detail": 0.07,
+    "texture_from": 0.55,
     "schedule": "simple 6 (same layout as KSampler)"
    }
   },
@@ -668,10 +701,10 @@
    "outputs": [],
    "properties": {},
    "widgets_values": [
-    "## H3 Image: realism text to image\n1. **Prompt**: keep the first sentence and the last one. Describe the picture in between: who or what, the action and expression, clothing, place and light.\n2. Pick the aspect ratio, then **Run** (Ctrl+Enter).\n\n**Why it looks real:** the H3 Image Empty Picture node puts an empty picture in front of the prompt for the first two steps (Kijai's trick, ported from KJNodes). With any picture in its conditioning, H3 Image renders in its reference mode, which is far cleaner than its text-only mode; without one, skin and textures come out crusty and over-sharpened. The prompt never mentions the picture. H3 also only draws photographic detail at 16-20 MP, so the size stays at 16 MP. The H3 Image KSampler is the edit workflow's sampler: plain Euler on H3's own distilled grid, then a light texture pass on the last two steps.\n\n**Seed:** on the sampler; each queue takes a new one. To refine a good result, drag it back into ComfyUI (it carries its workflow and seed), set the seed to fixed and change only the prompt.\n\n**Time:** about 25-30 s per image at 16 MP on an RTX PRO 6000 (96 GB), once the models are loaded."
+    "## H3 Image: realism text to image (v2.0)\n1. **Prompt**: keep the first sentence and the last one. Describe the picture in between: who or what, the action and expression, clothing, place and light.\n2. Pick the aspect ratio and megapixels (16–64 MP practical; 96 MP verified clean ceiling), then **Run** (Ctrl+Enter).\n\n**Why it looks real:** **H3 Realism Empty Picture** puts a black 512 px picture's vision tokens in front of the prompt on the first two steps (Kijai's trick, ported from KJNodes). With any picture in its conditioning, H3 renders in its clean reference mode instead of its crusty text-only mode, keeping crisp pores and individual hairs. **H3 Realism KSampler** runs `spectral + texture 8` (8 calls) for the sharpest T2I skin and hair, or switch `mode` to `spectral 6` for 6-call speed.\n\n**Seed:** on the sampler; each queue takes a new one. To refine a good result, drag it back into ComfyUI (it carries its workflow and seed), set the seed to fixed and change only the prompt.\n\n**Time:** about 25–35 s per 16 MP image on an RTX PRO 6000 (96 GB), once the models are loaded."
    ],
    "widgets_values_named": {
-    "text": "## H3 Image: realism text to image\n1. **Prompt**: keep the first sentence and the last one. Describe the picture in between: who or what, the action and expression, clothing, place and light.\n2. Pick the aspect ratio, then **Run** (Ctrl+Enter).\n\n**Why it looks real:** the H3 Image Empty Picture node puts an empty picture in front of the prompt for the first two steps (Kijai's trick, ported from KJNodes). With any picture in its conditioning, H3 Image renders in its reference mode, which is far cleaner than its text-only mode; without one, skin and textures come out crusty and over-sharpened. The prompt never mentions the picture. H3 also only draws photographic detail at 16-20 MP, so the size stays at 16 MP. The H3 Image KSampler is the edit workflow's sampler: plain Euler on H3's own distilled grid, then a light texture pass on the last two steps.\n\n**Seed:** on the sampler; each queue takes a new one. To refine a good result, drag it back into ComfyUI (it carries its workflow and seed), set the seed to fixed and change only the prompt.\n\n**Time:** about 25-30 s per image at 16 MP on an RTX PRO 6000 (96 GB), once the models are loaded."
+    "text": "## H3 Image: realism text to image (v2.0)\n1. **Prompt**: keep the first sentence and the last one. Describe the picture in between: who or what, the action and expression, clothing, place and light.\n2. Pick the aspect ratio and megapixels (16–64 MP practical; 96 MP verified clean ceiling), then **Run** (Ctrl+Enter).\n\n**Why it looks real:** **H3 Realism Empty Picture** puts a black 512 px picture's vision tokens in front of the prompt on the first two steps (Kijai's trick, ported from KJNodes). With any picture in its conditioning, H3 renders in its clean reference mode instead of its crusty text-only mode, keeping crisp pores and individual hairs. **H3 Realism KSampler** runs `spectral + texture 8` (8 calls) for the sharpest T2I skin and hair, or switch `mode` to `spectral 6` for 6-call speed.\n\n**Seed:** on the sampler; each queue takes a new one. To refine a good result, drag it back into ComfyUI (it carries its workflow and seed), set the seed to fixed and change only the prompt.\n\n**Time:** about 25–35 s per 16 MP image on an RTX PRO 6000 (96 GB), once the models are loaded."
    },
    "color": "#432",
    "bgcolor": "#653"
@@ -694,10 +727,10 @@
    "outputs": [],
    "properties": {},
    "widgets_values": [
-    "**Tips**\n- Leave the H3 Image Empty Picture node in: it keeps the result clean. Without it, skin comes out crusty.\n- Candid moments read as real: an action, an unguarded expression, one personal detail.\n- Render a few seeds and pick. Hands, held objects and text can come out doubled or ghosted; that comes from the model's layout, and stock KSampler draws the same.\n- New text in the shot (a sign, a label): write it in quotes and change `Sharp skin detail, no text, no watermark.` to `Every letter of that text is spelled exactly as written and sharply readable. Sharp skin detail, no other text, no watermark.` Keep it short.\n- For a product or a place, `Sharp detail` fits better than `Sharp skin detail`. Patterned bowls and plates tend to grow made-up characters; ask for a plain one.\n- Above 16 MP: disconnect the size node and type width and height on the Prompt node (multiples of 32). 96 MP is the ceiling (Lab 1 on the CivitAI page).\n- The LoRA loader (top right) is off; turn it on for a character LoRA. In our edit tests a character LoRA made skin smoother, so keep it at 0.5 or lower."
+    "**Tips**\n- Leave the H3 Realism Empty Picture node in: it keeps the result clean. Without it, skin comes out crusty.\n- Candid moments read as real: an action, an unguarded expression, one personal detail.\n- Render a few seeds and pick. Hands, held objects and text can come out doubled or ghosted; that comes from the model's layout, and stock KSampler draws the same.\n- New text in the shot (a sign, a label): write it in quotes and change `Sharp skin detail, no text, no watermark.` to `Every letter of that text is spelled exactly as written and sharply readable. Sharp skin detail, no other text, no watermark.` Keep it short.\n- For a product or a place, `Sharp detail` fits better than `Sharp skin detail`. Patterned bowls and plates tend to grow made-up characters; ask for a plain one.\n- Above 16 MP: raise `megapixels` directly on the **H3 Realism Resolution Selector** (16–64 MP practical, 96 MP verified clean ceiling from Lab 1).\n- The LoRA loader (top right) is off; turn it on for a character LoRA. In our edit tests a character LoRA made skin smoother, so keep it at 0.5 or lower."
    ],
    "widgets_values_named": {
-    "text": "**Tips**\n- Leave the H3 Image Empty Picture node in: it keeps the result clean. Without it, skin comes out crusty.\n- Candid moments read as real: an action, an unguarded expression, one personal detail.\n- Render a few seeds and pick. Hands, held objects and text can come out doubled or ghosted; that comes from the model's layout, and stock KSampler draws the same.\n- New text in the shot (a sign, a label): write it in quotes and change `Sharp skin detail, no text, no watermark.` to `Every letter of that text is spelled exactly as written and sharply readable. Sharp skin detail, no other text, no watermark.` Keep it short.\n- For a product or a place, `Sharp detail` fits better than `Sharp skin detail`. Patterned bowls and plates tend to grow made-up characters; ask for a plain one.\n- Above 16 MP: disconnect the size node and type width and height on the Prompt node (multiples of 32). 96 MP is the ceiling (Lab 1 on the CivitAI page).\n- The LoRA loader (top right) is off; turn it on for a character LoRA. In our edit tests a character LoRA made skin smoother, so keep it at 0.5 or lower."
+    "text": "**Tips**\n- Leave the H3 Realism Empty Picture node in: it keeps the result clean. Without it, skin comes out crusty.\n- Candid moments read as real: an action, an unguarded expression, one personal detail.\n- Render a few seeds and pick. Hands, held objects and text can come out doubled or ghosted; that comes from the model's layout, and stock KSampler draws the same.\n- New text in the shot (a sign, a label): write it in quotes and change `Sharp skin detail, no text, no watermark.` to `Every letter of that text is spelled exactly as written and sharply readable. Sharp skin detail, no other text, no watermark.` Keep it short.\n- For a product or a place, `Sharp detail` fits better than `Sharp skin detail`. Patterned bowls and plates tend to grow made-up characters; ask for a plain one.\n- Above 16 MP: raise `megapixels` directly on the **H3 Realism Resolution Selector** (16–64 MP practical, 96 MP verified clean ceiling from Lab 1).\n- The LoRA loader (top right) is off; turn it on for a character LoRA. In our edit tests a character LoRA made skin smoother, so keep it at 0.5 or lower."
    },
    "color": "#432",
    "bgcolor": "#653"
@@ -720,17 +753,17 @@
    "outputs": [],
    "properties": {},
    "widgets_values": [
-    "**comfyui-h3-sampler** (github.com/igorls/comfyui-h3-sampler; update it if the Empty Picture node is missing): the **H3 Image KSampler** runs plain Euler on H3's distilled 6-step grid for structure, then a second-order step with fresh noise and extra detail on the last two steps. **H3 Image Empty Picture** keeps H3 in its clean reference mode. Leave their settings as they are. Without the pack, use the RES4LYF version of this workflow."
+    "**comfyui-h3-sampler v2.0** (github.com/igorls/comfyui-h3-sampler): **H3 Realism KSampler** combines Euler layout steps with 2D FFT frequency-split re-noising and exponential Heun texture (`spectral + texture 8` default here; `spectral 6` for faster 6-call renders). **H3 Realism Empty Picture** keeps H3 in its clean reference mode (advanced `end = 0.25` for cleanest skin/landscapes, or `0.10` for step-0-only slightly crisper hair). **H3 Realism Resolution Selector** goes up to 96 MP+ directly on the canvas. Without the pack, use the RES4LYF version of this workflow."
    ],
    "widgets_values_named": {
-    "text": "**comfyui-h3-sampler** (github.com/igorls/comfyui-h3-sampler; update it if the Empty Picture node is missing): the **H3 Image KSampler** runs plain Euler on H3's distilled 6-step grid for structure, then a second-order step with fresh noise and extra detail on the last two steps. **H3 Image Empty Picture** keeps H3 in its clean reference mode. Leave their settings as they are. Without the pack, use the RES4LYF version of this workflow."
+    "text": "**comfyui-h3-sampler v2.0** (github.com/igorls/comfyui-h3-sampler): **H3 Realism KSampler** combines Euler layout steps with 2D FFT frequency-split re-noising and exponential Heun texture (`spectral + texture 8` default here; `spectral 6` for faster 6-call renders). **H3 Realism Empty Picture** keeps H3 in its clean reference mode (advanced `end = 0.25` for cleanest skin/landscapes, or `0.10` for step-0-only slightly crisper hair). **H3 Realism Resolution Selector** goes up to 96 MP+ directly on the canvas. Without the pack, use the RES4LYF version of this workflow."
    },
    "color": "#432",
    "bgcolor": "#653"
   },
   {
    "id": 64,
-   "type": "H3ImageEmptyPicture",
+   "type": "H3RealismEmptyPicture",
    "pos": [
     1080,
     1060
@@ -786,7 +819,7 @@
     }
    ],
    "properties": {
-    "Node name for S&R": "H3ImageEmptyPicture"
+    "Node name for S&R": "H3RealismEmptyPicture"
    },
    "widgets_values": [
     0.0,
